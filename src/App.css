@@ -1,0 +1,10 @@
+.board__container {
+  display: inline-block;
+}
+.board__item {
+  display: flex;
+}
+.squere {
+  width: 100px;
+  height: 100px;
+}
