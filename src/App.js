@@ -56,12 +56,25 @@ function App() {
   const [statusGame, setStatusGame] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [seconds, setSeconds] = useState(0);
+  const [timeX, setTimeX] = useState(0);
+  const [timeO, setTimeO] = useState(0);
+  const [timerGame, setTimerGame] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  function emtyTimer() {
+    setSeconds(0);
+    setTimeX(0);
+    setTimeO(0);
+  }
+
   function resetGame() {
     setSize(selectedSize);
     setSquqres(Array(selectedSize * selectedSize).fill(null));
     setIsNext(true);
     emtyTimer();
     setIsGameOver(false);
+    setTimerGame(0);
   }
 
   function changeSize(e) {
@@ -79,12 +92,6 @@ function App() {
     setIsNext(!isNext);
   }
 
-  function showModal() {
-    setTimeout(() => {
-      setIsModalOpen(true);
-    }, 2000);
-  }
-
   useEffect(() => {
     const winner = getWinner(squqres, size);
     const isFull = squqres.every((cell) => cell !== null);
@@ -93,13 +100,13 @@ function App() {
       if (winner === "✖") {
         setStatusGame("Переміг: ігрок 1.  Вітаємо!");
         setWinX((prev) => prev + 1);
-        showModal();
+
         setTimerGame(timeX);
         setIsGameOver(true);
       } else {
         setStatusGame("Переміг: ігрок 2.  Вітаємо!");
         setWinO((prev) => prev + 1);
-        showModal();
+
         setTimerGame(timeO);
         setIsGameOver(true);
       }
@@ -107,7 +114,7 @@ function App() {
     } else if (isFull) {
       setStatusGame("Нічия! Спробуйте ще :)");
       setAllGame((prev) => prev + 1);
-      showModal();
+
       setTimerGame(seconds);
       setIsGameOver(true);
     } else {
@@ -115,39 +122,28 @@ function App() {
     }
   }, [squqres, isNext]);
 
-  //timer
-  const [seconds, setSeconds] = useState(0);
-  const [timeX, setTimeX] = useState(0);
-  const [timeO, setTimeO] = useState(0);
-  const [timerGame, setTimerGame] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
-
-  function emtyTimer() {
-    setSeconds(0);
-    setTimeX(0);
-    setTimeO(0);
-  }
-
   useEffect(() => {
     if (isGameOver) return;
-    const timerGame = setInterval(() => {
+    const timer = setInterval(() => {
       setSeconds((prev) => prev + 1);
-    }, 1000);
-
-    return () => clearInterval(timerGame);
-  }, [isGameOver]);
-
-  useEffect(() => {
-    if (isGameOver) return;
-    const timerGame = setInterval(() => {
       if (isNext) {
         setTimeX((prev) => prev + 1);
       } else {
         setTimeO((prev) => prev + 1);
       }
     }, 1000);
-    return () => clearInterval(timerGame);
+
+    return () => clearInterval(timer);
   }, [isNext, isGameOver]);
+
+  useEffect(() => {
+    if (isGameOver) {
+      const timeout = setTimeout(() => {
+        setIsModalOpen(true);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isGameOver]);
 
   return (
     <div className="app-container">
