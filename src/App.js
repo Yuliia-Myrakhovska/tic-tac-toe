@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import Info from "./components/Info";
 
@@ -27,6 +27,10 @@ function getWinner(squqres) {
 function App() {
   const [isNext, setIsNext] = useState(true);
   const [squqres, setSquqres] = useState(Array(9).fill(null));
+  const [winX, setWinX] = useState(0);
+  const [winO, setWinO] = useState(0);
+  const [allGame, setAllGame] = useState(0);
+  const [statusGame, setStatusGame] = useState("");
 
   function resetGame() {
     setSquqres(Array(9).fill(null));
@@ -34,7 +38,7 @@ function App() {
   }
   function gameClick(i) {
     const newSquqres = [...squqres];
-    if (getWinner(i) || newSquqres[i]) {
+    if (getWinner(squqres) || newSquqres[i]) {
       return;
     }
     newSquqres[i] = isNext ? "x" : "o";
@@ -42,22 +46,38 @@ function App() {
     setIsNext(!isNext);
   }
 
-  const winner = getWinner(squqres);
-  const isFull = squqres.every((cell) => cell !== null);
-  let statusGame;
-  if (winner) {
-    statusGame = `Переміг: ${winner}`;
-  } else if (isFull) {
-    statusGame = "Нічия!";
-  } else {
-    statusGame = "Наступний:" + (isNext ? "x" : "o");
-  }
+  useEffect(() => {
+    const winner = getWinner(squqres);
+    const isFull = squqres.every((cell) => cell !== null);
+
+    if (winner) {
+      if (winner === "x") {
+        setStatusGame("Переміг: x");
+        setWinX((prev) => prev + 1);
+      } else {
+        setStatusGame("Переміг: 0");
+        setWinO((prev) => prev + 1);
+      }
+      setAllGame((prev) => prev + 1);
+    } else if (isFull) {
+      setStatusGame("Нічия!");
+      setAllGame((prev) => prev + 1);
+    } else {
+      setStatusGame("Наступний:" + (isNext ? "x" : "o"));
+    }
+  }, [squqres, isNext]);
 
   return (
     <div>
       <h1>tic-tac-toe</h1>
       <Board squqres={squqres} onClick={gameClick} />
-      <Info statusGame={statusGame} onReset={resetGame} />
+      <Info
+        statusGame={statusGame}
+        winX={winX}
+        winO={winO}
+        allGame={allGame}
+        onReset={resetGame}
+      />
     </div>
   );
 }
