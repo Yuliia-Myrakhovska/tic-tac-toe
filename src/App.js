@@ -2,32 +2,54 @@ import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import Info from "./components/Info";
 import Modal from "./components/Modal";
-
+import Timer from "./components/Timer";
 import "./App.css";
 
-function getWinner(squqres) {
-  const options = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-  ];
-  for (let i = 0; i < options.length; i++) {
-    const [a, b, c] = options[i];
+function getOptions(size = 3) {
+  const options = [];
 
-    if (squqres[a] && squqres[a] === squqres[b] && squqres[a] === squqres[c]) {
-      return squqres[a];
+  //варінти по горизонталі та вертикалі
+  for (let i = 0; i < size; i++) {
+    const row = [];
+    const col = [];
+    for (let j = 0; j < size; j++) {
+      row.push(i * size + j);
+      col.push(j * size + i);
+    }
+    options.push(row);
+    options.push(col);
+  }
+
+  //варіанти діагоналей
+  const diag = [];
+  const diag2 = [];
+
+  for (let i = 0; i < size; i++) {
+    diag.push(i * size + i);
+    diag2.push(i * size + (size - (i + 1)));
+  }
+  options.push(diag);
+  options.push(diag2);
+
+  return options;
+}
+function getWinner(squqres, size) {
+  const options = getOptions(size);
+
+  for (let line of options) {
+    const first = squqres[line[0]];
+
+    if (first && line.every((i) => squqres[i] === first)) {
+      return first;
     }
   }
   return null;
 }
 function App() {
   const [isNext, setIsNext] = useState(true);
-  const [squqres, setSquqres] = useState(Array(9).fill(null));
+  const [size, setSize] = useState(3);
+  const [selectedSize, setSelectedSize] = useState(3);
+  const [squqres, setSquqres] = useState(Array(size * size).fill(null));
   const [winX, setWinX] = useState(0);
   const [winO, setWinO] = useState(0);
   const [allGame, setAllGame] = useState(0);
@@ -35,9 +57,18 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   function resetGame() {
-    setSquqres(Array(9).fill(null));
+    setSize(selectedSize);
+    setSquqres(Array(selectedSize * selectedSize).fill(null));
     setIsNext(true);
+    emtyTimer();
+    setIsGameOver(false);
   }
+
+  function changeSize(e) {
+    const newSize = parseInt(e.target.value, 10);
+    setSelectedSize(newSize);
+  }
+
   function gameClick(i) {
     const newSquqres = [...squqres];
     if (getWinner(squqres) || newSquqres[i]) {
@@ -55,7 +86,7 @@ function App() {
   }
 
   useEffect(() => {
-    const winner = getWinner(squqres);
+    const winner = getWinner(squqres, size);
     const isFull = squqres.every((cell) => cell !== null);
 
     if (winner) {
@@ -63,25 +94,72 @@ function App() {
         setStatusGame("Переміг: ігрок 1.  Вітаємо!");
         setWinX((prev) => prev + 1);
         showModal();
+        setTimerGame(timeX);
+        setIsGameOver(true);
       } else {
         setStatusGame("Переміг: ігрок 2.  Вітаємо!");
         setWinO((prev) => prev + 1);
         showModal();
+        setTimerGame(timeO);
+        setIsGameOver(true);
       }
       setAllGame((prev) => prev + 1);
     } else if (isFull) {
       setStatusGame("Нічия! Спробуйте ще :)");
       setAllGame((prev) => prev + 1);
       showModal();
+      setTimerGame(seconds);
+      setIsGameOver(true);
     } else {
       setStatusGame("ходить - " + (isNext ? "ГРАВЕЦЬ 1(✖)" : "ГРАВЕЦЬ 2(◯)"));
     }
   }, [squqres, isNext]);
 
+  //timer
+  const [seconds, setSeconds] = useState(0);
+  const [timeX, setTimeX] = useState(0);
+  const [timeO, setTimeO] = useState(0);
+  const [timerGame, setTimerGame] = useState(0);
+  const [isGameOver, setIsGameOver] = useState(false);
+
+  function emtyTimer() {
+    setSeconds(0);
+    setTimeX(0);
+    setTimeO(0);
+  }
+
+  useEffect(() => {
+    if (isGameOver) return;
+    const timerGame = setInterval(() => {
+      setSeconds((prev) => prev + 1);
+    }, 1000);
+
+    return () => clearInterval(timerGame);
+  }, [isGameOver]);
+
+  useEffect(() => {
+    if (isGameOver) return;
+    const timerGame = setInterval(() => {
+      if (isNext) {
+        setTimeX((prev) => prev + 1);
+      } else {
+        setTimeO((prev) => prev + 1);
+      }
+    }, 1000);
+    return () => clearInterval(timerGame);
+  }, [isNext, isGameOver]);
+
   return (
     <div>
       <h1>tic-tac-toe</h1>
-      <Board squqres={squqres} onClick={gameClick} />
+      <select value={selectedSize} onChange={changeSize}>
+        {[3, 4, 5, 6, 7, 8, 9].map((i) => (
+          <option key={i} value={i}>
+            {i} x {i}
+          </option>
+        ))}
+      </select>
+      <Board squqres={squqres} size={size} onClick={gameClick} />
       <Info
         statusGame={statusGame}
         winX={winX}
@@ -89,9 +167,11 @@ function App() {
         allGame={allGame}
         onReset={resetGame}
       />
+      <Timer time={seconds} timeX={timeX} timeO={timeO} />
       <Modal
         isOpen={isModalOpen}
         statusGame={statusGame}
+        timerGame={timerGame}
         onClose={() => setIsModalOpen(false)}
       />
     </div>
