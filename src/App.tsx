@@ -1,17 +1,18 @@
-import React, { useState, useEffect } from "react";
-import Board from "./components/Board";
-import Info from "./components/Info";
-import Modal from "./components/Modal";
-import Timer from "./components/Timer";
+import React, { useState, useEffect, FC } from "react";
+import Board from "./components/Board.tsx";
+import Info from "./components/Info.tsx";
+import Modal from "./components/Modal.tsx";
+import Timer from "./components/Timer.tsx";
 import "./App.css";
 
-function getOptions(size = 3) {
-  const options = [];
+export type SquqreValue = "✖" | "◯" | null;
 
-  //варінти по горизонталі та вертикалі
+function getOptions(size: number = 3):number[][] {
+  const options:number[][] = [];
+
   for (let i = 0; i < size; i++) {
-    const row = [];
-    const col = [];
+    const row:number[] = [];
+    const col:number[] = [];
     for (let j = 0; j < size; j++) {
       row.push(i * size + j);
       col.push(j * size + i);
@@ -20,9 +21,8 @@ function getOptions(size = 3) {
     options.push(col);
   }
 
-  //варіанти діагоналей
-  const diag = [];
-  const diag2 = [];
+  const diag:number[] = [];
+  const diag2:number[] = [];
 
   for (let i = 0; i < size; i++) {
     diag.push(i * size + i);
@@ -33,7 +33,7 @@ function getOptions(size = 3) {
 
   return options;
 }
-function getWinner(squqres, size) {
+function getWinner(squqres:SquqreValue[], size:number):SquqreValue {
   const options = getOptions(size);
 
   for (let line of options) {
@@ -45,22 +45,22 @@ function getWinner(squqres, size) {
   }
   return null;
 }
-function App() {
-  const [isNext, setIsNext] = useState(true);
-  const [size, setSize] = useState(3);
-  const [selectedSize, setSelectedSize] = useState(3);
-  const [squqres, setSquqres] = useState(Array(size * size).fill(null));
-  const [winX, setWinX] = useState(0);
-  const [winO, setWinO] = useState(0);
-  const [allGame, setAllGame] = useState(0);
-  const [statusGame, setStatusGame] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+const App: React.FC = () =>{
+  const [isNext, setIsNext] = useState<boolean>(true);
+  const [size, setSize] = useState<number>(3);
+  const [selectedSize, setSelectedSize] = useState<number>(3);
+  const [squqres, setSquqres] = useState<SquqreValue[]>(Array(size * size).fill(null));
+  const [winX, setWinX] = useState<number>(0);
+  const [winO, setWinO] = useState<number>(0);
+  const [allGame, setAllGame] = useState<number>(0);
+  const [statusGame, setStatusGame] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-  const [seconds, setSeconds] = useState(0);
-  const [timeX, setTimeX] = useState(0);
-  const [timeO, setTimeO] = useState(0);
-  const [timerGame, setTimerGame] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
+  const [seconds, setSeconds] = useState<number>(0);
+  const [timeX, setTimeX] = useState<number>(0);
+  const [timeO, setTimeO] = useState<number>(0);
+  const [timerGame, setTimerGame] = useState<number>(0);
+  const [isGameOver, setIsGameOver] = useState<boolean>(false);
 
   function emtyTimer() {
     setSeconds(0);
@@ -77,14 +77,14 @@ function App() {
     setTimerGame(0);
   }
 
-  function changeSize(e) {
+  function changeSize(e: React.ChangeEvent<HTMLSelectElement>) {
     const newSize = parseInt(e.target.value, 10);
     setSelectedSize(newSize);
   }
 
-  function gameClick(i) {
+  function gameClick(i:number) {
     const newSquqres = [...squqres];
-    if (getWinner(squqres) || newSquqres[i]) {
+    if (getWinner(squqres, size) || newSquqres[i]) {
       return;
     }
     newSquqres[i] = isNext ? "✖" : "◯";

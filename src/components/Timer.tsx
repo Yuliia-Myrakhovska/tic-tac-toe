@@ -1,5 +1,11 @@
-function Timer({ time, timeX, timeO }) {
-  function formatTime(second) {
+type TimerProps = {
+   time:number;
+   timeX:number; 
+   timeO:number;
+};
+
+const Timer:React.FC<TimerProps> =({ time, timeX, timeO }) => {
+  function formatTime(second:number):string {
     const minute = Math.floor(second / 60);
     const sec = second % 60;
     return `${minute.toString().padStart(2, "0")}:${sec

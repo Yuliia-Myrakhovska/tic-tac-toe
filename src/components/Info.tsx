@@ -1,4 +1,9 @@
-function Info({ statusGame, winX, winO, allGame, onReset }) {
+import React from "react";
+
+type InfoProps = {
+statusGame:string, winX:number, winO:number, allGame:number, onReset:() => void
+}
+const Info:React.FC<InfoProps > = ({ statusGame, winX, winO, allGame, onReset }) => {
   return (
     <div className="info-container">
       <div className="info-text">

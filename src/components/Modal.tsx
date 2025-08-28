@@ -1,6 +1,13 @@
-function Modal({ isOpen, statusGame, timerGame, onClose }) {
+type ModalProps = {
+  isOpen:boolean; 
+  statusGame:string;
+  timerGame:number; 
+  onClose: () => void;
+};
+
+const Modal:React.FC<ModalProps> = ({ isOpen, statusGame, timerGame, onClose }) => {
   if (!isOpen) return null;
-  function formatTime(second) {
+  function formatTime(second:number):string {
     const minute = Math.floor(second / 60);
     const sec = second % 60;
     return `${minute.toString().padStart(2, "0")}:${sec

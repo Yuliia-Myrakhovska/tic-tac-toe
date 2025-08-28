@@ -1,6 +1,14 @@
-import Squqre from "./Squqre";
+import Squqre from "./Squqre.tsx";
+import {SquqreValue} from "../App.tsx";
+import React,{FC} from "react";
 
-function Board({ squqres, size, onClick }) {
+type BoardProps = {
+  squqres:SquqreValue[]; 
+  size:number; 
+  onClick:(i:number) => void; 
+}
+
+const Board: React.FC<BoardProps> = ({ squqres, size, onClick }) => {
   return (
     <div
       style={{
