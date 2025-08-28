@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import Info from "./components/Info";
+import Modal from "./components/Modal";
 
 import "./App.css";
 
@@ -31,6 +32,7 @@ function App() {
   const [winO, setWinO] = useState(0);
   const [allGame, setAllGame] = useState(0);
   const [statusGame, setStatusGame] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function resetGame() {
     setSquqres(Array(9).fill(null));
@@ -41,9 +43,15 @@ function App() {
     if (getWinner(squqres) || newSquqres[i]) {
       return;
     }
-    newSquqres[i] = isNext ? "x" : "o";
+    newSquqres[i] = isNext ? "✖" : "◯";
     setSquqres(newSquqres);
     setIsNext(!isNext);
+  }
+
+  function showModal() {
+    setTimeout(() => {
+      setIsModalOpen(true);
+    }, 2000);
   }
 
   useEffect(() => {
@@ -51,19 +59,22 @@ function App() {
     const isFull = squqres.every((cell) => cell !== null);
 
     if (winner) {
-      if (winner === "x") {
-        setStatusGame("Переміг: x");
+      if (winner === "✖") {
+        setStatusGame("Переміг: ігрок 1.  Вітаємо!");
         setWinX((prev) => prev + 1);
+        showModal();
       } else {
-        setStatusGame("Переміг: 0");
+        setStatusGame("Переміг: ігрок 2.  Вітаємо!");
         setWinO((prev) => prev + 1);
+        showModal();
       }
       setAllGame((prev) => prev + 1);
     } else if (isFull) {
-      setStatusGame("Нічия!");
+      setStatusGame("Нічия! Спробуйте ще :)");
       setAllGame((prev) => prev + 1);
+      showModal();
     } else {
-      setStatusGame("Наступний:" + (isNext ? "x" : "o"));
+      setStatusGame("ходить - " + (isNext ? "ГРАВЕЦЬ 1(✖)" : "ГРАВЕЦЬ 2(◯)"));
     }
   }, [squqres, isNext]);
 
@@ -77,6 +88,11 @@ function App() {
         winO={winO}
         allGame={allGame}
         onReset={resetGame}
+      />
+      <Modal
+        isOpen={isModalOpen}
+        statusGame={statusGame}
+        onClose={() => setIsModalOpen(false)}
       />
     </div>
   );
