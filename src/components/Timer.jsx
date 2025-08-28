@@ -7,10 +7,10 @@ function Timer({ time, timeX, timeO }) {
       .padStart(2, "0")}`;
   }
   return (
-    <div>
-      <div>all{formatTime(time)}</div>
-      <div>x-{formatTime(timeX)}</div>
-      <div>o-{formatTime(timeO)}</div>
+    <div className="timer-container">
+      <h3>Час гри: {formatTime(time)}</h3>
+      <h3>Час ГРАВЕЦЯ 1(✖): {formatTime(timeX)}</h3>
+      <h3>Час ГРАВЕЦЯ 2(◯): {formatTime(timeO)}</h3>
     </div>
   );
 }

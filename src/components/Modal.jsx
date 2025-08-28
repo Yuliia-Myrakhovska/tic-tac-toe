@@ -1,6 +1,3 @@
-import close from "../img/close.svg";
-import style from "./modal.module.css";
-
 function Modal({ isOpen, statusGame, timerGame, onClose }) {
   if (!isOpen) return null;
   function formatTime(second) {
@@ -12,14 +9,13 @@ function Modal({ isOpen, statusGame, timerGame, onClose }) {
   }
   return (
     <div>
-      <div className={style.overlay} onClick={onClose}></div>
-      <div className={style.container}>
-        <div className="modal__close">
-          <img src={close} alt="close" onClick={onClose} />
-          <h1>{statusGame}</h1>
-          <p>{formatTime(timerGame)}</p>
-          <button onClick={onClose}>OK</button>
-        </div>
+      <div className="overlay" onClick={onClose}></div>
+      <div className="modal-container">
+        <h1 className="modal-title">{statusGame}</h1>
+        <p className="modal-time">Витрачено часу: {formatTime(timerGame)}</p>
+        <button className="modal-close" onClick={onClose}>
+          OK
+        </button>
       </div>
     </div>
   );

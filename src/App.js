@@ -111,7 +111,7 @@ function App() {
       setTimerGame(seconds);
       setIsGameOver(true);
     } else {
-      setStatusGame("ходить - " + (isNext ? "ГРАВЕЦЬ 1(✖)" : "ГРАВЕЦЬ 2(◯)"));
+      setStatusGame("Xодить - " + (isNext ? "ГРАВЕЦЬ 1(✖)" : "ГРАВЕЦЬ 2(◯)"));
     }
   }, [squqres, isNext]);
 
@@ -150,8 +150,8 @@ function App() {
   }, [isNext, isGameOver]);
 
   return (
-    <div>
-      <h1>tic-tac-toe</h1>
+    <div className="app-container">
+      <h1 className="title">tic-tac-toe</h1>
       <select value={selectedSize} onChange={changeSize}>
         {[3, 4, 5, 6, 7, 8, 9].map((i) => (
           <option key={i} value={i}>
@@ -159,15 +159,20 @@ function App() {
           </option>
         ))}
       </select>
-      <Board squqres={squqres} size={size} onClick={gameClick} />
-      <Info
-        statusGame={statusGame}
-        winX={winX}
-        winO={winO}
-        allGame={allGame}
-        onReset={resetGame}
-      />
-      <Timer time={seconds} timeX={timeX} timeO={timeO} />
+      <div className="game-container">
+        <Board squqres={squqres} size={size} onClick={gameClick} />
+        <div className="game-sidebar">
+          <Timer time={seconds} timeX={timeX} timeO={timeO} />
+          <Info
+            statusGame={statusGame}
+            winX={winX}
+            winO={winO}
+            allGame={allGame}
+            onReset={resetGame}
+          />
+        </div>
+      </div>
+
       <Modal
         isOpen={isModalOpen}
         statusGame={statusGame}
