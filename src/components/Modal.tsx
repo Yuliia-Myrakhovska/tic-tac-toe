@@ -1,11 +1,13 @@
-type ModalProps = {
-  isOpen:boolean; 
-  statusGame:string;
-  timerGame:number; 
-  onClose: () => void;
+import {FC} from "react";
+
+interface ModalProps {
+  isOpen:boolean, 
+  statusGame:string,
+  timerGame:number,
+  onClose: () => void
 };
 
-const Modal:React.FC<ModalProps> = ({ isOpen, statusGame, timerGame, onClose }) => {
+const Modal:FC<ModalProps> = ({ isOpen, statusGame, timerGame, onClose }) => {
   if (!isOpen) return null;
   function formatTime(second:number):string {
     const minute = Math.floor(second / 60);

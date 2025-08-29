@@ -2,13 +2,13 @@ import Squqre from "./Squqre.tsx";
 import {SquqreValue} from "../App.tsx";
 import React,{FC} from "react";
 
-type BoardProps = {
-  squqres:SquqreValue[]; 
-  size:number; 
-  onClick:(i:number) => void; 
+interface BoardProps {
+  squqres:SquqreValue[],
+  size:number,
+  onClick:(i:number) => void 
 }
 
-const Board: React.FC<BoardProps> = ({ squqres, size, onClick }) => {
+const Board: FC<BoardProps> = ({ squqres, size, onClick }) => {
   return (
     <div
       style={{

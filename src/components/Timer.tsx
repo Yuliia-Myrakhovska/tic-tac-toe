@@ -1,10 +1,12 @@
-type TimerProps = {
-   time:number;
-   timeX:number; 
-   timeO:number;
+import {FC} from "react";
+
+interface TimerProps {
+   time:number,
+   timeX:number,
+   timeO:number,
 };
 
-const Timer:React.FC<TimerProps> =({ time, timeX, timeO }) => {
+const Timer:FC<TimerProps> =({ time, timeX, timeO }) => {
   function formatTime(second:number):string {
     const minute = Math.floor(second / 60);
     const sec = second % 60;

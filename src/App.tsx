@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, FC, ChangeEvent } from "react";
 import Board from "./components/Board.tsx";
 import Info from "./components/Info.tsx";
 import Modal from "./components/Modal.tsx";
@@ -45,7 +45,7 @@ function getWinner(squqres:SquqreValue[], size:number):SquqreValue {
   }
   return null;
 }
-const App: React.FC = () =>{
+const App: FC = () =>{
   const [isNext, setIsNext] = useState<boolean>(true);
   const [size, setSize] = useState<number>(3);
   const [selectedSize, setSelectedSize] = useState<number>(3);
@@ -77,7 +77,7 @@ const App: React.FC = () =>{
     setTimerGame(0);
   }
 
-  function changeSize(e: React.ChangeEvent<HTMLSelectElement>) {
+  function changeSize(e: ChangeEvent<HTMLSelectElement>) {
     const newSize = parseInt(e.target.value, 10);
     setSelectedSize(newSize);
   }
